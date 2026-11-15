@@ -2,429 +2,615 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Learn cybersecurity and ethical bug bounty with CyberLab.">
-    <title>CyberLab | Learn. Practice. Secure.</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Learn cybersecurity and ethical bug bounty with CyberLab.">
+<title>CyberLab | Learn. Practice. Secure.</title>
+<link rel="stylesheet" href="style.css">
 
-    <style>
-        .auth-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,.85);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .auth-box {
-            background: #101b2a;
-            border: 1px solid #20e68a;
-            border-radius: 12px;
-            padding: 30px;
-            width: 100%;
-            max-width: 400px;
-            color: white;
-            position: relative;
-        }
-
-        .auth-box h2 {
-            color: #20e68a;
-            margin-bottom: 20px;
-        }
-
-        .auth-box input {
-            width: 100%;
-            padding: 13px;
-            margin: 9px 0;
-            border-radius: 6px;
-            border: 1px solid #45546a;
-            background: #19283a;
-            color: white;
-            box-sizing: border-box;
-        }
-
-        .auth-submit {
-            width: 100%;
-            padding: 13px;
-            margin-top: 15px;
-            background: #20e68a;
-            color: #071323;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .auth-close {
-            position: absolute;
-            right: 15px;
-            top: 10px;
-            font-size: 25px;
-            cursor: pointer;
-            color: white;
-        }
-
-        .auth-switch {
-            margin-top: 18px;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        .auth-switch a {
-            color: #20e68a;
-            cursor: pointer;
-        }
-
-        #auth-message {
-            margin-top: 15px;
-            font-size: 14px;
-            overflow-wrap: anywhere;
-        }
-
-        .user-status {
-            color: #20e68a;
-            font-size: 13px;
-            margin-right: 10px;
-        }
-    </style>
+<style>
+.auth-modal {
+    display:none; position:fixed; inset:0;
+    background:rgba(0,0,0,.88); z-index:9999;
+    justify-content:center; align-items:center; padding:20px;
+}
+.auth-box {
+    background:#101b2a; border:1px solid #20e68a;
+    border-radius:12px; padding:30px;
+    width:100%; max-width:400px; color:white;
+    position:relative;
+}
+.auth-box h2 {color:#20e68a}
+.auth-box input {
+    width:100%; padding:13px; margin:9px 0;
+    border-radius:6px; border:1px solid #45546a;
+    background:#19283a; color:white; box-sizing:border-box;
+}
+.auth-submit {
+    width:100%; padding:13px; margin-top:15px;
+    background:#20e68a; color:#071323;
+    border:0; border-radius:6px; font-weight:bold; cursor:pointer;
+}
+.auth-close {position:absolute;right:15px;top:10px;font-size:25px;cursor:pointer}
+.auth-switch {margin-top:18px;text-align:center;font-size:14px}
+.auth-switch a {color:#20e68a;cursor:pointer}
+#auth-message {margin-top:15px;overflow-wrap:anywhere}
+.user-status {color:#20e68a;font-size:13px;margin-right:10px}
+#dashboard {display:none;padding:45px 5%;min-height:70vh}
+.dash-header {display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+.dash-header h1,.dash-title {color:#20e68a}
+.dash-tabs {display:flex;gap:10px;flex-wrap:wrap;margin:25px 0}
+.dash-tabs button,.dash-action {
+    background:#19283a;color:#20e68a;border:1px solid #20e68a;
+    padding:10px 16px;border-radius:7px;cursor:pointer;
+}
+.dash-tabs button.active,.dash-action:hover {
+    background:#20e68a;color:#071323;
+}
+.dash-grid {
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:18px;margin:25px 0;
+}
+.dash-card,.lesson-card,.profile-card {
+    background:#101b2a;border:1px solid #26394d;
+    border-radius:10px;padding:20px;color:#fff;
+}
+.dash-card h3 {color:#20e68a}
+.dash-card strong {font-size:28px}
+.lesson-list {display:grid;gap:12px;margin-top:20px}
+.lesson-card {display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.lesson-card h3 {margin:0 0 7px;color:#20e68a}
+.lesson-card p {margin:0;color:#bdc8d5;font-size:14px}
+.lesson-actions {display:flex;gap:8px;flex-wrap:wrap}
+.dash-section {display:none}
+.dash-section.active {display:block}
+.dash-message {color:#20e68a;margin:12px 0}
+.profile-card p {overflow-wrap:anywhere}
+.dash-small {color:#bdc8d5;font-size:13px}
+@media(max-width:600px) {
+    #dashboard {padding:30px 5%}
+    .lesson-card {align-items:flex-start}
+}
+</style>
 </head>
 
 <body>
 
-    <!-- Header Section -->
-    <header>
-        <nav class="navbar">
-            <a href="#" class="logo">Cyber<span>Lab</span></a>
+<header>
+<nav class="navbar">
+    <a href="#" class="logo">Cyber<span>Lab</span></a>
 
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#courses">Courses</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
+    <ul class="nav-links">
+        <li><a href="#home" id="home-link">Home</a></li>
+        <li><a href="#courses" id="courses-link">Courses</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+    </ul>
 
-            <div class="nav-buttons">
-                <span id="user-status" class="user-status"></span>
-                <button type="button" class="login-btn" id="login-button">Login</button>
-                <button type="button" class="register-btn" id="register-button">Register</button>
-                <button type="button" id="logout-button" style="display:none;">Logout</button>
-            </div>
-        </nav>
-    </header>
+    <div class="nav-buttons">
+        <span id="user-status" class="user-status"></span>
+        <button type="button" class="login-btn" id="login-button">Login</button>
+        <button type="button" class="register-btn" id="register-button">Register</button>
+        <button type="button" id="dashboard-button" style="display:none;">Dashboard</button>
+        <button type="button" id="logout-button" style="display:none;">Logout</button>
+    </div>
+</nav>
+</header>
 
-    <!-- Main Section -->
-    <main>
+<main>
+<section id="home" class="hero">
+    <p class="welcome-text">WELCOME TO CYBERLAB</p>
+    <h1>Learn Cybersecurity.<br><span>Build Your Skills.</span></h1>
+    <p class="hero-description">
+        Start your journey into cybersecurity, ethical hacking
+        and bug bounty with free learning resources.
+    </p>
+    <a href="#courses" class="start-btn">Start Learning</a>
+</section>
 
-        <section id="home" class="hero">
-            <p class="welcome-text">WELCOME TO CYBERLAB</p>
+<section id="courses" class="courses">
+    <h2>Our Learning Tracks</h2>
+    <p>Build your cybersecurity skills step by step.</p>
 
-            <h1>
-                Learn Cybersecurity.<br>
-                <span>Build Your Skills.</span>
-            </h1>
+    <div class="course-container">
+        <div class="course-card"><h3>01. Computer Fundamentals</h3><p>Learn computer and web basics.</p></div>
+        <div class="course-card"><h3>02. Networking</h3><p>Understand IP, DNS, ports and networks.</p></div>
+        <div class="course-card"><h3>03. Linux & Kali Linux</h3><p>Learn Linux commands and terminal basics.</p></div>
+        <div class="course-card"><h3>04. Python for Security</h3><p>Learn Python programming for security.</p></div>
+        <div class="course-card"><h3>05. Web Security</h3><p>Understand web application security.</p></div>
+        <div class="course-card"><h3>06. Bug Bounty</h3><p>Learn ethical bug bounty methodology.</p></div>
+        <div class="course-card"><h3>07. OWASP Top 10</h3><p>Study common web application risks.</p></div>
+    </div>
+</section>
 
-            <p class="hero-description">
-                Start your journey into cybersecurity, ethical hacking
-                and bug bounty with free learning resources.
-            </p>
-
-            <a href="#courses" class="start-btn">Start Learning</a>
-        </section>
-
-        <section id="courses" class="courses">
-            <h2>Our Learning Tracks</h2>
-            <p>Build your cybersecurity skills step by step.</p>
-
-            <div class="course-container">
-
-                <div class="course-card">
-                    <h3>01. Computer Fundamentals</h3>
-                    <p>Learn computer and web basics.</p>
-                </div>
-
-                <div class="course-card">
-                    <h3>02. Networking</h3>
-                    <p>Understand IP, DNS, ports and networks.</p>
-                </div>
-
-                <div class="course-card">
-                    <h3>03. Linux & Kali Linux</h3>
-                    <p>Learn Linux commands and terminal basics.</p>
-                </div>
-
-                <div class="course-card">
-                    <h3>04. Python for Security</h3>
-                    <p>Learn Python programming for security.</p>
-                </div>
-
-                <div class="course-card">
-                    <h3>05. Web Security</h3>
-                    <p>Understand web application security.</p>
-                </div>
-
-                <div class="course-card">
-                    <h3>06. Bug Bounty</h3>
-                    <p>Learn ethical bug bounty methodology.</p>
-                </div>
-
-                <div class="course-card">
-                    <h3>07. OWASP Top 10</h3>
-                    <p>Study common web application risks.</p>
-                </div>
-
-            </div>
-        </section>
-
-        <section id="about" class="about">
-            <h2>About CyberLab</h2>
-            <p>
-                CyberLab is a free learning platform designed to help
-                students develop practical cybersecurity knowledge
-                and ethical hacking skills.
-            </p>
-        </section>
-
-    </main>
-
-    <footer id="contact">
-        <p>© 2026 CyberLab. Learn. Practice. Secure.</p>
-    </footer>
-
-    <!-- Login and Registration Modal -->
-    <div class="auth-modal" id="auth-modal">
-        <div class="auth-box">
-
-            <span class="auth-close" id="close-auth">&times;</span>
-
-            <h2 id="auth-title">Student Login</h2>
-
-            <form id="auth-form">
-                <input
-                    type="text"
-                    id="student-name"
-                    placeholder="Your full name"
-                    autocomplete="name"
-                    style="display:none;"
-                >
-
-                <input
-                    type="email"
-                    id="student-email"
-                    placeholder="Email address"
-                    autocomplete="email"
-                    required
-                >
-
-                <input
-                    type="password"
-                    id="student-password"
-                    placeholder="Password (minimum 6 characters)"
-                    autocomplete="current-password"
-                    minlength="6"
-                    required
-                >
-
-                <button type="submit" class="auth-submit" id="auth-submit">
-                    Login
-                </button>
-            </form>
-
-            <p id="auth-message" role="status" aria-live="polite"></p>
-
-            <div class="auth-switch">
-                <span id="switch-text">Don't have an account?</span>
-                <a id="switch-auth">Register</a>
-            </div>
-
+<section id="dashboard">
+    <div class="dash-header">
+        <div>
+            <p class="welcome-text">CYBERLAB STUDENT PORTAL</p>
+            <h1>Welcome, <span id="dash-name">Student</span>!</h1>
+            <p class="dash-small">Your cybersecurity learning journey starts here.</p>
         </div>
+        <button class="dash-action" id="back-home">Back to Home</button>
     </div>
 
-    <script src="script.js"></script>
+    <div class="dash-tabs">
+        <button class="active" data-tab="overview">Overview</button>
+        <button data-tab="my-courses">My Courses</button>
+        <button data-tab="my-bookmarks">Bookmarks</button>
+        <button data-tab="my-profile">My Profile</button>
+    </div>
 
-    <!-- Supabase Authentication -->
-    <script type="module">
-        import { createClient } from
-        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+    <div id="overview" class="dash-section active">
+        <h2 class="dash-title">Learning Overview</h2>
+        <div class="dash-grid">
+            <div class="dash-card"><h3>Available Tracks</h3><strong>7</strong></div>
+            <div class="dash-card"><h3>Completed Lessons</h3><strong id="completed-count">0</strong></div>
+            <div class="dash-card"><h3>My Bookmarks</h3><strong id="bookmark-count">0</strong></div>
+        </div>
+        <p class="dash-message" id="dash-status">Your progress will appear here.</p>
+    </div>
 
-        // Replace with your actual Supabase credentials.
-        const SUPABASE_URL = "https://riujwawhhsanogqmkqpy.supabase.co";
-        const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_uyszSBsqn0pm2me_mtEOPQ_JJ1exumQ";
+    <div id="my-courses" class="dash-section">
+        <h2 class="dash-title">My Courses & Lessons</h2>
+        <p class="dash-small">Complete lessons to track your learning progress.</p>
+        <div id="lesson-list" class="lesson-list"></div>
+    </div>
 
-        const supabase = createClient(
-            SUPABASE_URL,
-            SUPABASE_PUBLISHABLE_KEY
-        );
+    <div id="my-bookmarks" class="dash-section">
+        <h2 class="dash-title">My Bookmarks</h2>
+        <div id="bookmark-list" class="lesson-list"></div>
+    </div>
 
-        const modal = document.getElementById("auth-modal");
-        const form = document.getElementById("auth-form");
-        const title = document.getElementById("auth-title");
-        const submit = document.getElementById("auth-submit");
-        const message = document.getElementById("auth-message");
+    <div id="my-profile" class="dash-section">
+        <h2 class="dash-title">My Profile</h2>
+        <div class="profile-card">
+            <p><strong>Student Name:</strong> <span id="profile-name">Loading...</span></p>
+            <p><strong>Email:</strong> <span id="profile-email">Loading...</span></p>
+            <p><strong>Student ID:</strong></p>
+            <p class="dash-small" id="profile-id">Loading...</p>
+        </div>
+    </div>
+</section>
 
-        const nameInput = document.getElementById("student-name");
-        const emailInput = document.getElementById("student-email");
-        const passwordInput = document.getElementById("student-password");
+<section id="about" class="about">
+    <h2>About CyberLab</h2>
+    <p>
+        CyberLab is a free learning platform designed to help
+        students develop practical cybersecurity knowledge
+        and ethical hacking skills.
+    </p>
+</section>
+</main>
 
-        const loginButton = document.getElementById("login-button");
-        const registerButton = document.getElementById("register-button");
-        const logoutButton = document.getElementById("logout-button");
+<footer id="contact">
+    <p>© 2026 CyberLab. Learn. Practice. Secure.</p>
+</footer>
 
-        const switchText = document.getElementById("switch-text");
-        const switchAuth = document.getElementById("switch-auth");
+<div class="auth-modal" id="auth-modal">
+    <div class="auth-box">
+        <span class="auth-close" id="close-auth">&times;</span>
+        <h2 id="auth-title">Student Login</h2>
 
-        let currentMode = "login";
+        <form id="auth-form">
+            <input type="text" id="student-name" placeholder="Your full name"
+                autocomplete="name" style="display:none;">
+            <input type="email" id="student-email" placeholder="Email address"
+                autocomplete="email" required>
+            <input type="password" id="student-password"
+                placeholder="Password (minimum 6 characters)"
+                autocomplete="current-password" minlength="6" required>
+            <button type="submit" class="auth-submit" id="auth-submit">Login</button>
+        </form>
 
-        function showMessage(text, success = false) {
-            message.textContent = text;
-            message.style.color = success ? "#20e68a" : "#ff7777";
-        }
+        <p id="auth-message" role="status" aria-live="polite"></p>
+        <div class="auth-switch">
+            <span id="switch-text">Don't have an account?</span>
+            <a id="switch-auth">Register</a>
+        </div>
+    </div>
+</div>
 
-        function openModal(mode) {
-            currentMode = mode;
-            modal.style.display = "flex";
-            message.textContent = "";
+<script src="script.js"></script>
 
-            if (mode === "register") {
-                title.textContent = "Student Registration";
-                submit.textContent = "Create Account";
-                nameInput.style.display = "block";
-                nameInput.required = true;
-                passwordInput.autocomplete = "new-password";
-                switchText.textContent = "Already have an account?";
-                switchAuth.textContent = "Login";
-            } else {
-                title.textContent = "Student Login";
-                submit.textContent = "Login";
-                nameInput.style.display = "none";
-                nameInput.required = false;
-                passwordInput.autocomplete = "current-password";
-                switchText.textContent = "Don't have an account?";
-                switchAuth.textContent = "Register";
-            }
-        }
+<script type="module">
+import { createClient } from
+"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-        loginButton.addEventListener("click", () => openModal("login"));
-        registerButton.addEventListener("click", () => openModal("register"));
+/* ADD YOUR ORIGINAL SUPABASE KEY HERE */
+const SUPABASE_URL = "https://riujwawhhsanogqmkqpy.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_uyszSBsqn0pm2me_mtEOPQ_JJ1exumQ";
 
-        document.getElementById("close-auth").addEventListener("click", () => {
-            modal.style.display = "none";
-        });
+const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
-        modal.addEventListener("click", (event) => {
-            if (event.target === modal) {
-                modal.style.display = "none";
-            }
-        });
+const $ = (id) => document.getElementById(id);
 
-        switchAuth.addEventListener("click", () => {
-            openModal(currentMode === "login" ? "register" : "login");
-        });
+const modal = $("auth-modal");
+const form = $("auth-form");
+const message = $("auth-message");
+const submit = $("auth-submit");
 
-        form.addEventListener("submit", async (event) => {
-            event.preventDefault();
+let currentMode = "login";
+let currentUser = null;
+let completedLessons = new Set();
+let bookmarkedLessons = new Set();
 
-            submit.disabled = true;
-            submit.textContent = "Please wait...";
-            message.textContent = "";
+const tracks = [
+    {
+        id:"computer",
+        name:"Computer Fundamentals",
+        lessons:[
+            ["computer-1","Introduction to Computers"],
+            ["computer-2","How the Internet Works"],
+            ["computer-3","HTML & Website Basics"]
+        ]
+    },
+    {
+        id:"networking",
+        name:"Networking Fundamentals",
+        lessons:[
+            ["network-1","Introduction to Networking"],
+            ["network-2","IP Address and DNS"],
+            ["network-3","Ports and Protocols"]
+        ]
+    },
+    {
+        id:"linux",
+        name:"Linux & Kali Linux",
+        lessons:[
+            ["linux-1","Introduction to Linux"],
+            ["linux-2","Basic Linux Commands"],
+            ["linux-3","Kali Linux Environment"]
+        ]
+    },
+    {
+        id:"python",
+        name:"Python for Security",
+        lessons:[
+            ["python-1","Python Introduction"],
+            ["python-2","Variables and Data Types"],
+            ["python-3","Conditions and Loops"]
+        ]
+    },
+    {
+        id:"web",
+        name:"Web Application Security",
+        lessons:[
+            ["web-1","How Websites Work"],
+            ["web-2","HTTP Requests and Responses"],
+            ["web-3","Introduction to Web Security"]
+        ]
+    },
+    {
+        id:"bugbounty",
+        name:"Bug Bounty Methodology",
+        lessons:[
+            ["bug-1","What is Bug Bounty?"],
+            ["bug-2","Scope and Rules"],
+            ["bug-3","Responsible Vulnerability Reporting"]
+        ]
+    },
+    {
+        id:"owasp",
+        name:"OWASP Top 10",
+        lessons:[
+            ["owasp-1","Introduction to OWASP"],
+            ["owasp-2","Broken Access Control"],
+            ["owasp-3","Security Misconfiguration"]
+        ]
+    }
+];
 
-            const email = emailInput.value.trim();
-            const password = passwordInput.value;
-            const fullName = nameInput.value.trim();
+function showMessage(text, success=false) {
+    message.textContent = text;
+    message.style.color = success ? "#20e68a" : "#ff7777";
+}
 
-            try {
-                if (currentMode === "register") {
+function openModal(mode) {
+    currentMode = mode;
+    modal.style.display = "flex";
+    message.textContent = "";
 
-                    if (!fullName) {
-                        throw new Error("Please enter your full name.");
-                    }
+    $("auth-title").textContent =
+        mode === "register" ? "Student Registration" : "Student Login";
+    submit.textContent = mode === "register" ? "Create Account" : "Login";
+    $("student-name").style.display = mode === "register" ? "block" : "none";
+    $("student-name").required = mode === "register";
+    $("student-password").autocomplete =
+        mode === "register" ? "new-password" : "current-password";
+    $("switch-text").textContent =
+        mode === "register" ? "Already have an account?" : "Don't have an account?";
+    $("switch-auth").textContent =
+        mode === "register" ? "Login" : "Register";
+}
 
-                    const { data, error } = await supabase.auth.signUp({
-                        email: email,
-                        password: password,
-                        options: {
-                            data: {
-                                full_name: fullName
-                            },
-                            emailRedirectTo: window.location.origin
-                        }
-                    });
+$("login-button").addEventListener("click", () => openModal("login"));
+$("register-button").addEventListener("click", () => openModal("register"));
+$("close-auth").addEventListener("click", () => modal.style.display = "none");
+modal.addEventListener("click", (e) => {
+    if (e.target === modal) modal.style.display = "none";
+});
+$("switch-auth").addEventListener("click", () => {
+    openModal(currentMode === "login" ? "register" : "login");
+});
 
-                    if (error) throw error;
+form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    submit.disabled = true;
+    submit.textContent = "Please wait...";
 
-                    if (data.session) {
-                        showMessage("Registration successful! Welcome to CyberLab.", true);
-                        await updateUserStatus();
-                        setTimeout(() => modal.style.display = "none", 1500);
-                    } else {
-                        showMessage(
-                            "Registration successful! Please check your email and confirm your account.",
-                            true
-                        );
-                    }
+    try {
+        const email = $("student-email").value.trim();
+        const password = $("student-password").value;
 
-                } else {
+        if (currentMode === "register") {
+            const fullName = $("student-name").value.trim();
+            if (!fullName) throw new Error("Please enter your full name.");
 
-                    const { error } = await supabase.auth.signInWithPassword({
-                        email: email,
-                        password: password
-                    });
-
-                    if (error) throw error;
-
-                    showMessage("Login successful! Welcome back.", true);
-                    await updateUserStatus();
-                    setTimeout(() => modal.style.display = "none", 1200);
+            const {data, error} = await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: {full_name: fullName},
+                    emailRedirectTo: window.location.origin
                 }
+            });
 
-            } catch (error) {
-                showMessage(error.message);
-            } finally {
-                submit.disabled = false;
-                submit.textContent =
-                    currentMode === "register" ? "Create Account" : "Login";
-            }
-        });
+            if (error) throw error;
 
-        async function updateUserStatus() {
-            const { data: { user } } = await supabase.auth.getUser();
-
-            if (user) {
-                loginButton.style.display = "none";
-                registerButton.style.display = "none";
-                logoutButton.style.display = "inline-block";
-                document.getElementById("user-status").textContent =
-                    user.user_metadata?.full_name || user.email;
+            if (data.session) {
+                showMessage("Account created successfully!", true);
             } else {
-                loginButton.style.display = "inline-block";
-                registerButton.style.display = "inline-block";
-                logoutButton.style.display = "none";
-                document.getElementById("user-status").textContent = "";
+                showMessage("Account created. Please confirm your email.", true);
+            }
+        } else {
+            const {error} = await supabase.auth.signInWithPassword({email,password});
+            if (error) throw error;
+            showMessage("Login successful!", true);
+        }
+    } catch (error) {
+        showMessage(error.message);
+    } finally {
+        submit.disabled = false;
+        submit.textContent =
+            currentMode === "register" ? "Create Account" : "Login";
+    }
+});
+
+function renderUser(user) {
+    currentUser = user;
+
+    $("login-button").style.display = user ? "none" : "inline-block";
+    $("register-button").style.display = user ? "none" : "inline-block";
+    $("dashboard-button").style.display = user ? "inline-block" : "none";
+    $("logout-button").style.display = user ? "inline-block" : "none";
+    $("user-status").textContent =
+        user ? (user.user_metadata?.full_name || user.email) : "";
+
+    if (user) {
+        loadDashboard(user);
+    } else {
+        $("dashboard").style.display = "none";
+        $("home").style.display = "";
+        $("courses").style.display = "";
+        $("about").style.display = "";
+        completedLessons.clear();
+        bookmarkedLessons.clear();
+    }
+}
+
+async function loadDashboard(user) {
+    $("dash-status").textContent = "Loading your learning data...";
+
+    const [profileResult, progressResult, bookmarkResult] = await Promise.all([
+        supabase.from("profiles")
+            .select("full_name,email")
+            .eq("id",user.id)
+            .maybeSingle(),
+        supabase.from("learning_progress")
+            .select("lesson_id,completed")
+            .eq("user_id",user.id),
+        supabase.from("bookmarks")
+            .select("lesson_id")
+            .eq("user_id",user.id)
+    ]);
+
+    if (profileResult.error || progressResult.error || bookmarkResult.error) {
+        $("dash-status").textContent =
+            "Could not load some data. Please refresh and try again.";
+        console.error(profileResult.error, progressResult.error, bookmarkResult.error);
+        return;
+    }
+
+    const profile = profileResult.data || {};
+    $("dash-name").textContent =
+        profile.full_name || user.user_metadata?.full_name || "Student";
+    $("profile-name").textContent =
+        profile.full_name || user.user_metadata?.full_name || "Student";
+    $("profile-email").textContent = profile.email || user.email || "";
+    $("profile-id").textContent = user.id;
+
+    completedLessons = new Set(
+        (progressResult.data || [])
+            .filter(item => item.completed)
+            .map(item => item.lesson_id)
+    );
+
+    bookmarkedLessons = new Set(
+        (bookmarkResult.data || []).map(item => item.lesson_id)
+    );
+
+    updateCounts();
+    renderLessons();
+    renderBookmarks();
+
+    $("dash-status").textContent = "Your learning data is up to date.";
+}
+
+function updateCounts() {
+    $("completed-count").textContent = completedLessons.size;
+    $("bookmark-count").textContent = bookmarkedLessons.size;
+}
+
+function allLessons() {
+    return tracks.flatMap(track =>
+        track.lessons.map(([id,name]) => ({
+            id,name,track:track.name
+        }))
+    );
+}
+
+function renderLessons() {
+    $("lesson-list").innerHTML = tracks.map(track => `
+        <div>
+            <h3 class="dash-title">${track.name}</h3>
+            ${track.lessons.map(([id,name]) => `
+                <div class="lesson-card">
+                    <div>
+                        <h3>${name}</h3>
+                        <p>${completedLessons.has(id) ? "Completed" : "Not completed"}</p>
+                    </div>
+                    <div class="lesson-actions">
+                        <button class="dash-action" data-action="complete" data-id="${id}">
+                            ${completedLessons.has(id) ? "Completed ✓" : "Mark Complete"}
+                        </button>
+                        <button class="dash-action" data-action="bookmark" data-id="${id}">
+                            ${bookmarkedLessons.has(id) ? "Saved ★" : "Bookmark ☆"}
+                        </button>
+                    </div>
+                </div>
+            `).join("")}
+        </div>
+    `).join("");
+}
+
+function renderBookmarks() {
+    const saved = allLessons().filter(item =>
+        bookmarkedLessons.has(item.id)
+    );
+
+    $("bookmark-list").innerHTML = saved.length
+        ? saved.map(item => `
+            <div class="lesson-card">
+                <div>
+                    <h3>${item.name}</h3>
+                    <p>${item.track}</p>
+                </div>
+                <button class="dash-action" data-action="bookmark" data-id="${item.id}">
+                    Remove ★
+                </button>
+            </div>
+        `).join("")
+        : "<p class='dash-small'>You have no saved lessons yet.</p>";
+}
+
+$("dashboard").addEventListener("click", async (e) => {
+    const button = e.target.closest("button[data-action]");
+    if (!button || !currentUser) return;
+
+    const id = button.dataset.id;
+    const action = button.dataset.action;
+    button.disabled = true;
+
+    try {
+        if (action === "complete") {
+            const wasCompleted = completedLessons.has(id);
+
+            const {error} = await supabase
+                .from("learning_progress")
+                .upsert({
+                    user_id:currentUser.id,
+                    lesson_id:id,
+                    completed:!wasCompleted,
+                    updated_at:new Date().toISOString()
+                }, {onConflict:"user_id,lesson_id"});
+
+            if (error) throw error;
+
+            if (wasCompleted) completedLessons.delete(id);
+            else completedLessons.add(id);
+        }
+
+        if (action === "bookmark") {
+            if (bookmarkedLessons.has(id)) {
+                const {error} = await supabase.from("bookmarks")
+                    .delete()
+                    .eq("user_id",currentUser.id)
+                    .eq("lesson_id",id);
+                if (error) throw error;
+                bookmarkedLessons.delete(id);
+            } else {
+                const {error} = await supabase.from("bookmarks")
+                    .insert({user_id:currentUser.id,lesson_id:id});
+                if (error) throw error;
+                bookmarkedLessons.add(id);
             }
         }
 
-        logoutButton.addEventListener("click", async () => {
-            const { error } = await supabase.auth.signOut();
+        updateCounts();
+        renderLessons();
+        renderBookmarks();
+        $("dash-status").textContent = "Your changes have been saved.";
+    } catch (error) {
+        $("dash-status").textContent = error.message;
+    }
+    button.disabled = false;
+});
 
-            if (error) {
-                alert(error.message);
-                return;
-            }
+function showTab(tab) {
+    document.querySelectorAll(".dash-section").forEach(section =>
+        section.classList.toggle("active",section.id === tab)
+    );
+    document.querySelectorAll(".dash-tabs button").forEach(button =>
+        button.classList.toggle("active",button.dataset.tab === tab)
+    );
+}
 
-            await updateUserStatus();
-            alert("You have logged out successfully.");
-        });
+document.querySelectorAll(".dash-tabs button").forEach(button => {
+    button.addEventListener("click", () => showTab(button.dataset.tab));
+});
 
-        supabase.auth.onAuthStateChange(() => {
-            updateUserStatus();
-        });
+function showDashboard() {
+    if (!currentUser) {
+        openModal("login");
+        return;
+    }
+    $("home").style.display = "none";
+    $("courses").style.display = "none";
+    $("about").style.display = "none";
+    $("dashboard").style.display = "block";
+    showTab("overview");
+    window.scrollTo({top:0,behavior:"smooth"});
+}
 
-        await updateUserStatus();
+$("dashboard-button").addEventListener("click",showDashboard);
+$("back-home").addEventListener("click",() => {
+    $("dashboard").style.display = "none";
+    $("home").style.display = "";
+    $("courses").style.display = "";
+    $("about").style.display = "";
+    window.scrollTo({top:0,behavior:"smooth"});
+});
 
-    </script>
+$("logout-button").addEventListener("click",async () => {
+    const {error} = await supabase.auth.signOut();
+    if (error) alert(error.message);
+    else {
+        $("dashboard").style.display = "none";
+        $("home").style.display = "";
+        $("courses").style.display = "";
+        $("about").style.display = "";
+        alert("You have logged out successfully.");
+    }
+});
 
+supabase.auth.onAuthStateChange((_event,session) => {
+    renderUser(session?.user || null);
+});
+
+const {data:{session},error:sessionError} = await supabase.auth.getSession();
+if (sessionError) console.error(sessionError);
+renderUser(session?.user || null);
+
+</script>
 </body>
 </html>
