@@ -484,6 +484,59 @@ function allLessons() {
     );
 }
 
+const lessonContents = {
+    "computer-2": `
+        <h2>1. What is the Internet?</h2>
+
+        <h3>English Explanation</h3>
+        <p>
+            The Internet is a worldwide network that connects
+            computers, mobile phones, servers and other devices.
+            It allows people to communicate and share information.
+        </p>
+
+        <h3>বাংলা ব্যাখ্যা</h3>
+        <p>
+            Internet হলো সারা বিশ্বের অসংখ্য Computer, Mobile
+            এবং Server-এর একটি বিশাল নেটওয়ার্ক। এর মাধ্যমে
+            আমরা তথ্য আদান-প্রদান করতে পারি।
+        </p>
+
+        <h3>2. How does the Internet work?</h3>
+        <ol>
+            <li>Client sends a request.</li>
+            <li>DNS finds the IP address.</li>
+            <li>Server receives the request.</li>
+            <li>Server sends a response.</li>
+            <li>Browser displays the webpage.</li>
+        </ol>
+
+        <h3>3. Important Terms</h3>
+        <ul>
+            <li><strong>Client:</strong> Device that sends a request.</li>
+            <li><strong>Server:</strong> Provides data or services.</li>
+            <li><strong>IP Address:</strong> Network address of a device.</li>
+            <li><strong>DNS:</strong> Finds the IP address of a domain.</li>
+            <li><strong>Browser:</strong> Software used to view websites.</li>
+        </ul>
+
+        <h3>4. Practical Exercise</h3>
+        <p>
+            Open Google Chrome and visit www.google.com.
+            Think about which device is the client and
+            which system provides the webpage.
+        </p>
+
+        <h3>5. Cybersecurity Connection</h3>
+        <p>
+            Understanding clients, servers, DNS and requests
+            is important for learning web security and bug bounty.
+        </p>
+
+        <p><strong>Lesson 1: How the Internet Works</strong></p>
+    `
+};
+
 function renderLessons() {
     $("lesson-list").innerHTML = tracks.map(track => `
         <div>
